@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         imgview=findViewById(R.id.img_view)
-
+        /*用按鈕選擇照片顯示*/
         val imagePicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 imgview.setImageURI(uri)
