@@ -1,5 +1,4 @@
 package com.example.test
-
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.Context
