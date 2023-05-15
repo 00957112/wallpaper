@@ -1,4 +1,5 @@
 package com.example.test
+
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.Context
@@ -75,6 +76,9 @@ class MainActivity : AppCompatActivity() {
                     wallView.layoutParams = params
                     wallView.requestLayout()
 
+                    //wallView.adjustViewBounds = true
+
+
                     //顯示桌布
                     val drawable = imgview.drawable
                     imgview.adjustViewBounds = true
@@ -86,17 +90,6 @@ class MainActivity : AppCompatActivity() {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-
-                    wallView.adjustViewBounds = true
-                    val location = IntArray(2)
-                    wallView.getLocationInWindow(location)
-
-                    val x = location[0]
-                    val y = location[1]
-                    Log.d("size","${x},${y}")
-                    //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
-                    Log.d("view","${wallView.width},${wallView.height}")
-
                 }
             }
 
@@ -161,6 +154,14 @@ class MainActivity : AppCompatActivity() {
             //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
             Log.d("view","${imgview.width},${imgview.height}")
             //imgview.getLeft() imgview.getTop() //不知道是甚麼值 好像是初始時的左和上
+            val location2 = IntArray(2)
+            wallView.getLocationOnScreen(location)
+
+            val xx = location[0]
+            val yy = location[1]
+            Log.d("wallsize","${xx},${yy}")//左上角
+            //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
+            Log.d("wallview","${wallView.width},${wallView.height}")
             true
         }
 
