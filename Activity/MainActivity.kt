@@ -3,6 +3,7 @@ package com.example.test
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
@@ -26,6 +27,7 @@ import kotlin.math.sqrt
 class MainActivity : AppCompatActivity() {//主頁面
     lateinit var button:Button
     lateinit var button2:Button
+    lateinit var button3:Button
     lateinit var imgview:ImageView
     lateinit var wallView:ImageView
     lateinit var wallpaperManager:WallpaperManager
@@ -94,6 +96,19 @@ class MainActivity : AppCompatActivity() {//主頁面
                 }
             }
 
+
+        button3 = findViewById(R.id.btn3)
+        button3.setOnClickListener {
+            Log.d("wall", "gogo")
+            /*val intent = Intent(this, WallpaperTest::class.java)
+            startService(intent)*/
+            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+            intent.putExtra(
+                WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                ComponentName(this, WallpaperTest::class.java)
+            )
+            startActivity(intent)
+        }
         button = findViewById(R.id.btn)
         button.setOnClickListener {
             imagePicker.launch("image/*")//按鈕取圖庫照片
