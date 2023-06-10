@@ -9,6 +9,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="submit"/>
+    <Button
+        android:layout_toEndOf="@id/btn"
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set"/>
 
     <ImageView
         android:layout_below="@id/btn"
@@ -16,15 +22,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
+
     <ImageView
-        android:layout_below="@id/btn"
-        android:id="@+id/wallView"
         android:layout_centerInParent="true"
+        android:id="@+id/wallView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:translationZ="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn"
         android:background="@drawable/bk_style"
-        />
+        android:translationZ="100dp" />
 
 
 </RelativeLayout>
