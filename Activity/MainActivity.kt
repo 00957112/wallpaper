@@ -1,6 +1,7 @@
 package com.example.test
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.*
@@ -17,11 +18,13 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
+import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
     lateinit var button:Button
+    lateinit var button2:Button
     lateinit var imgview:ImageView
     lateinit var wallView:ImageView
     private var cropWidth:Int=0
@@ -40,6 +43,13 @@ class MainActivity : AppCompatActivity() {
         val dy = event.getY(0) - event.getY(1)
         return sqrt(dx * dx + dy * dy)
     }
+    private fun getStatusBarHeight(context: Context): Int {
+        val rectangle = Rect()
+        val window = (context as Activity).window
+        window.decorView.getWindowVisibleDisplayFrame(rectangle)
+        return rectangle.top
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +108,8 @@ class MainActivity : AppCompatActivity() {
             imagePicker.launch("image/*")
 
         }
+        button2 = findViewById(R.id.btn2)
+
 
 
         var mode = NONE
@@ -155,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("view","${imgview.width},${imgview.height}")
             //imgview.getLeft() imgview.getTop() //不知道是甚麼值 好像是初始時的左和上
             val location2 = IntArray(2)
-            wallView.getLocationOnScreen(location)
+            wallView.getLocationOnScreen(location2)
 
             val xx = location[0]
             val yy = location[1]
@@ -165,8 +177,75 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // 获取 ImageView 上的 Drawable 对象
-        val drawable = imgview.drawable
+        button2.setOnClickListener {
+            // 計算出裁剪區域
+            Log.d("QQQQ","set")
+            val location2 = IntArray(2)
+            wallView.getLocationOnScreen(location2)
+
+            val wallLeft = location2[0]
+            val wallTop = location2[1]
+            val clipRect = Rect(wallLeft, wallTop, wallLeft + wallView.width, wallTop + wallView.height)
+            Log.d("getp","左上角:${clipRect.left},${clipRect.top}")
+            Log.d("getp","寬高:${ clipRect.width()},${clipRect.height()}")
+            Log.d("getp","右下角:${wallLeft + wallView.width},${wallTop + wallView.height}")
+            val relativeLayout = findViewById<RelativeLayout>(R.id.container)
+// 開啟 drawingCache
+            relativeLayout.isDrawingCacheEnabled = true
+
+// 確保 drawingCache 是有效的
+            relativeLayout.buildDrawingCache()
+
+// 获取 drawingCache
+            try {
+                val pic=relativeLayout.drawingCache
+                if(pic==null) Log.d("QQQQ","nono")
+                val location3 = IntArray(2)
+                button2.getLocationOnScreen(location3)
+
+                //val btnleft = location3[0]
+                val btntop = location3[1]
+                if(pic!=null) {
+                    Log.d("QQQQ","setto")
+                    val bitmap = Bitmap.createBitmap(pic)
+                    // 關閉 drawingCache
+                    relativeLayout.isDrawingCacheEnabled = false
+                    // 裁剪出要保存的區域
+                    //var statusBarHeight = getStatusBarHeight(this)
+                    var statusBarHeight=btntop
+                    //statusBarHeight=statusBarHeight/2
+                    Log.d("QQQQ","上面區:${clipRect.top}-${statusBarHeight}->${clipRect.top-statusBarHeight}")
+                    val croppedBitmap = Bitmap.createBitmap(bitmap, clipRect.left, clipRect.top-statusBarHeight, clipRect.width(), clipRect.height())
+                    Log.d("QQQQ","切圖:${croppedBitmap.width},${croppedBitmap.height}")
+                    // 將圖片壓縮並保存到本地
+                    // 保存到本地
+                    /*
+                    val outputStream = FileOutputStream("your-image-file.jpg")
+                    croppedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+                    outputStream.close()
+
+                    val internalStorageDir = context.filesDir
+            */
+
+                    val wallpaperManager = WallpaperManager.getInstance(this)
+                    val displayMetrics = DisplayMetrics()
+                    windowManager.defaultDisplay.getMetrics(displayMetrics)
+                    val wallpaperWidth = displayMetrics.widthPixels
+                    val wallpaperHeight = displayMetrics.heightPixels
+                    //顯示桌布
+                    try {
+                        //val bitmap = (drawable!! as BitmapDrawable).bitmap
+                        val scaledBitmap =
+                            Bitmap.createScaledBitmap(croppedBitmap, wallpaperWidth, wallpaperHeight, true)
+                        wallpaperManager.setBitmap(scaledBitmap)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }}catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+        }
 
 
     }
