@@ -1,26 +1,21 @@
 package com.example.test
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.WallpaperManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
-import java.io.FileOutputStream
+import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import kotlin.math.sqrt
 
@@ -75,11 +70,27 @@ class MainActivity : AppCompatActivity() {//主頁面
         cropHeight = ((wallpaperHeight.toFloat()*0.75).toInt())
         wallpaperManager = WallpaperManager.getInstance(this)
 
+        val imagePicker2 =
+            registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                uri?.let {//開圖庫取圖片
+                    //val uri =
+                       // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
+                    val intentdata = Intent(this, WallpaperTest::class.java)
+                    intentdata.putExtra("key", uri.toString())
+                    startService(intentdata)
+
+                    val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                    intent.putExtra(
+                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                        ComponentName(this, WallpaperTest::class.java)
+                    )
+                    startActivity(intent)
+                }
+            }
         val imagePicker =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 uri?.let {//開圖庫取圖片
                     imgview.setImageURI(uri)
-
                     //給框框 wallView大小隨桌布大小
                     val params = wallView.layoutParams//為了改大小要先取出
                     params.width = cropWidth
@@ -99,15 +110,9 @@ class MainActivity : AppCompatActivity() {//主頁面
 
         button3 = findViewById(R.id.btn3)
         button3.setOnClickListener {
-            Log.d("wall", "gogo")
-            /*val intent = Intent(this, WallpaperTest::class.java)
-            startService(intent)*/
-            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-            intent.putExtra(
-                WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                ComponentName(this, WallpaperTest::class.java)
-            )
-            startActivity(intent)
+            Log.d("wall", "按下btn3")
+            WallpaperManager.getInstance(this).clear()
+            imagePicker2.launch("image/*")//按鈕取圖庫照片
         }
         button = findViewById(R.id.btn)
         button.setOnClickListener {
