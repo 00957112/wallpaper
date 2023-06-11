@@ -15,6 +15,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="set"/>
+    <Button
+        android:layout_toEndOf="@id/btn2"
+        android:id="@+id/btn3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="wallpaper"/>
 
     <ImageView
         android:layout_below="@id/btn"
