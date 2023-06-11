@@ -1,23 +1,32 @@
 package com.example.test
-
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import java.io.IOException
 import kotlin.math.sqrt
+import android.Manifest
+import android.graphics.drawable.Drawable
+import android.util.DisplayMetrics
+import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
 
 class MainActivity : AppCompatActivity() {//主頁面
     lateinit var button:Button
@@ -31,6 +40,7 @@ class MainActivity : AppCompatActivity() {//主頁面
     private var wallpaperWidth:Int=0
     private var wallpaperHeight:Int=0
     private var mScaleFactor = 1.0f
+    private var canimg:Boolean = true
 
     companion object {
         private const val NONE = 0
@@ -42,7 +52,39 @@ class MainActivity : AppCompatActivity() {//主頁面
         val dy = event.getY(0) - event.getY(1)
         return sqrt(dx * dx + dy * dy)
     }
+ private val PERMISSION_REQUEST_CODE = 100
 
+    private fun requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // 已经获得了读取外部存储的权限
+            // 进行相应的操作
+        }
+    }
+
+    // 处理权限请求结果
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 用户授予了读取外部存储的权限
+                // 进行相应的操作
+            } else {
+               canimg = false
+            }
+        }
+    }
     private  fun WallpaperShow(bitmap:Bitmap){
         try {
             val scaledBitmap =
@@ -54,7 +96,7 @@ class MainActivity : AppCompatActivity() {//主頁面
     }
 
 
-    @SuppressLint("ClickableViewAccessibility")
+   @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -69,41 +111,79 @@ class MainActivity : AppCompatActivity() {//主頁面
         cropWidth = ((wallpaperWidth.toFloat()*0.75).toInt())
         cropHeight = ((wallpaperHeight.toFloat()*0.75).toInt())
         wallpaperManager = WallpaperManager.getInstance(this)
-
         val imagePicker2 =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 uri?.let {//開圖庫取圖片
                     //val uri =
-                       // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
-                    val intentdata = Intent(this, WallpaperTest::class.java)
+                    // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
+                    val intentdata = Intent(this, MyWallpaperService::class.java)
                     intentdata.putExtra("key", uri.toString())
                     startService(intentdata)
 
                     val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
                     intent.putExtra(
                         WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        ComponentName(this, WallpaperTest::class.java)
+                        ComponentName(this, MyWallpaperService::class.java)
                     )
                     startActivity(intent)
                 }
             }
+        var URI:Uri? = null
+
         val imagePicker =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 uri?.let {//開圖庫取圖片
-                    imgview.setImageURI(uri)
-                    //給框框 wallView大小隨桌布大小
+                    URI = uri
                     val params = wallView.layoutParams//為了改大小要先取出
                     params.width = cropWidth
                     params.height = cropHeight
-                    Log.d("xxx","${wallpaperWidth},${wallpaperHeight}\n${cropWidth},${cropHeight}")
+                    Log.d("xxx", "${wallpaperWidth},${wallpaperHeight}\n${cropWidth},${cropHeight}")
                     wallView.layoutParams = params
                     wallView.requestLayout()
+                    Glide.with(this)
+                        .asDrawable()
+                        .load(uri)
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                // Handle image loading failure
+                                return false
+                            }
 
-
-                    //顯示桌布
-                    val drawable = imgview.drawable
-                    imgview.adjustViewBounds = true
-                    WallpaperShow((drawable!! as BitmapDrawable).bitmap)
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                dataSource: DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                resource?.let {
+                                    if (resource is GifDrawable) {
+                                        // Loaded resource is a GIF
+                                        resource
+                                    } else {
+                                        requestStoragePermission()
+                                        // Loaded resource is a static image
+                                        if (canimg) {
+                                            BitmapDrawable(
+                                                resources,
+                                                (resource as BitmapDrawable).bitmap
+                                            )
+                                        } else {
+                                            return false
+                                        }
+                                    }
+                                    // Perform related operations, such as setting the ImageView content
+                                    imgview.setImageDrawable(resource)
+                                }
+                                return false
+                            }
+                        })
+                        .into(imgview)
                 }
             }
 
@@ -223,10 +303,7 @@ class MainActivity : AppCompatActivity() {//主頁面
             }
 
         }//btn2
-
-
-
-    }//oncreate
+    }
 
 
 
