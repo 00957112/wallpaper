@@ -111,24 +111,22 @@ class MainActivity : AppCompatActivity() {//主頁面
         cropWidth = ((wallpaperWidth.toFloat()*0.75).toInt())
         cropHeight = ((wallpaperHeight.toFloat()*0.75).toInt())
         wallpaperManager = WallpaperManager.getInstance(this)
-        val imagePicker2 =
-            registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-                uri?.let {//開圖庫取圖片
-                    //val uri =
-                    // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
-                    val intentdata = Intent(this, MyWallpaperService::class.java)
-                    intentdata.putExtra("key", uri.toString())
-                    startService(intentdata)
+       var URI:Uri? = null
 
-                    val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-                    intent.putExtra(
-                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        ComponentName(this, MyWallpaperService::class.java)
-                    )
-                    startActivity(intent)
-                }
-            }
-        var URI:Uri? = null
+       fun imagePicker2 () {
+            //val uri =
+            // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
+            val intentdata = Intent(this, MyWallpaperService::class.java)
+            intentdata.putExtra("key", URI.toString())
+            startService(intentdata)
+
+            val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+            intent.putExtra(
+                WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                ComponentName(this, MyWallpaperService::class.java)
+            )
+            startActivity(intent)
+        }
 
         val imagePicker =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -191,8 +189,8 @@ class MainActivity : AppCompatActivity() {//主頁面
         button3 = findViewById(R.id.btn3)
         button3.setOnClickListener {
             Log.d("wall", "按下btn3")
-            WallpaperManager.getInstance(this).clear()
-            imagePicker2.launch("image/*")//按鈕取圖庫照片
+            //WallpaperManager.getInstance(this).clear()
+            imagePicker2()//按鈕取圖庫照片
         }
         button = findViewById(R.id.btn)
         button.setOnClickListener {
