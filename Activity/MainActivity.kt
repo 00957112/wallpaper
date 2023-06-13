@@ -34,6 +34,15 @@ class MainActivity : AppCompatActivity() {//主頁面
     lateinit var button3:Button
     lateinit var imgview:ImageView
     lateinit var wallView:ImageView
+    //RECEIVER
+    lateinit var button4:Button //set Timer button
+    lateinit var button5:Button //clear Timer
+    lateinit var timeSet: EditText //set Timer number
+    lateinit var alarmManager:AlarmManager //important manager for repeat work
+    lateinit var receiverIntent:Intent //for broadcast receiver intent
+    lateinit var  pendingIntent : PendingIntent //I don't known
+    private var intervalInSeconds: Long = 0 //time (sec)
+    //RECEIVER=
     lateinit var wallpaperManager:WallpaperManager
     private var cropWidth:Int=0
     private var cropHeight:Int=0
@@ -42,6 +51,10 @@ class MainActivity : AppCompatActivity() {//主頁面
     private var mScaleFactor = 1.0f
     private var canimg:Boolean = true
 
+     //RECEIVER
+    val dataList=mutableListOf<Uri>()//for test, a list of Uri
+    //RECEIVER=
+    
     companion object {
         private const val NONE = 0
         private const val DRAG = 1
@@ -184,7 +197,45 @@ class MainActivity : AppCompatActivity() {//主頁面
                         .into(imgview)
                 }
             }
+        //RECEIVER
+        timeSet=findViewById(R.id.sec) //Timerset
+        /*for test add list contain Uri*/
+        dataList.add(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/test1"))
+        dataList.add(    Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/test2"))
 
+        button5=findViewById(R.id.btn5)
+        button5.setOnClickListener{
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
+            receiverIntent = Intent(this, AlarmReceiver::class.java) //set
+            pendingIntent = PendingIntent.getBroadcast(this, 0, receiverIntent, 0)//set
+
+            // cancel = stop Timer
+            alarmManager.cancel(pendingIntent)//must use that used intent or not work
+            Log.d("cancel","stop")
+        }
+        button4=findViewById(R.id.btn4)
+        button4.setOnClickListener{
+            intervalInSeconds = timeSet.text.toString().toLong() // get user set time(sec)
+            alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
+            receiverIntent = Intent(this, AlarmReceiver::class.java) //set
+            receiverIntent.putExtra("SECONDS", intervalInSeconds)//sec
+            receiverIntent.putExtra("wallpaperWidth",wallpaperWidth)//size for img clip
+            receiverIntent.putExtra("wallpaperHeight",wallpaperHeight)//size
+            receiverIntent.putParcelableArrayListExtra("Uri",ArrayList<Uri>( dataList))//list can like this way to transport list
+            pendingIntent = PendingIntent.getBroadcast(this, 0, receiverIntent, 0)//set
+            if(intervalInSeconds<60)intervalInSeconds=60//easy way to set limit
+            val intervalMillis = intervalInSeconds*1000 // sec->millisecond = every that time to work
+            val startTimeMillis = System.currentTimeMillis() //first run = now
+
+            alarmManager.setRepeating(//repeat set
+                AlarmManager.RTC_WAKEUP,//??
+                startTimeMillis,//first run time= now
+                intervalMillis,//during
+                pendingIntent //set
+            )
+
+        }
+        //RECEIVER=
 
         button3 = findViewById(R.id.btn3)
         button3.setOnClickListener {
