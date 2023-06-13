@@ -31,7 +31,7 @@ import java.io.IOException
 import java.io.InputStream
 import kotlin.math.sqrt
 
-class WallpaperTest: WallpaperService() {
+class MyWallpaperService: WallpaperService() {
     private var ischange: Boolean = false
 
     companion object {
@@ -71,7 +71,7 @@ class WallpaperTest: WallpaperService() {
         return super.onStartCommand(intent, flags, startId)
     }
     private fun clearwallpaper() {
-        val wallpaperManager = WallpaperManager.getInstance(this@WallpaperTest)
+        val wallpaperManager = WallpaperManager.getInstance(this@MyWallpaperService)
         try {
             wallpaperManager.clearWallpaper()
         } catch (e: IOException) {
