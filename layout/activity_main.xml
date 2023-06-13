@@ -37,6 +37,25 @@
         android:layout_below="@id/btn"
         android:background="@drawable/bk_style"
         android:translationZ="100dp" />
-
+<EditText
+        android:id="@+id/sec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btn3"
+        android:ems="10"
+        android:hint="10"
+        android:inputType="number" />
+    <Button
+        android:layout_toEndOf="@id/sec"
+        android:id="@+id/btn4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="setsec"/>
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btn5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="cleartime"/>
 
 </RelativeLayout>
