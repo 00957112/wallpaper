@@ -136,7 +136,7 @@ class WallpaperTest: WallpaperService() {
             if (visible) {
                 val canvas: Canvas = holder!!.lockCanvas()
                 canvas.save()
-
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR) // 清除畫布內容
                 if (gifDrawable != null) {
                     val gifWidth = gifDrawable!!.intrinsicWidth
                     val gifHeight = gifDrawable!!.intrinsicHeight
