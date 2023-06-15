@@ -27,8 +27,15 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Bitmap.CompressFormat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
+class SharedViewModel : ViewModel() {
+    val ImageUris: MutableLiveData<MutableList<String>> = MutableLiveData()
+}
 class ListViewFragment : Fragment() {
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var fabSelectImage: FloatingActionButton
     private val JSON_FILE_NAME = "ImageUris.json"
@@ -71,6 +78,13 @@ class ListViewFragment : Fragment() {
 
 
         return view
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
+        // 更新ImageUris列表
+        sharedViewModel.ImageUris.value = ImageUris
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

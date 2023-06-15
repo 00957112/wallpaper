@@ -106,7 +106,7 @@ class CropActivity : AppCompatActivity() {
         })
         frameLayout = findViewById(R.id.frameLayout)
         colorButton = findViewById(R.id.colorButton)
-        colorButton.setOnClickListener { changeColor() }
+
         saveButton = findViewById(R.id.saveButton)
         saveButton.setOnClickListener {
             saveImage()

@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.app.ActivityCompat
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.lifecycle.ViewModelProvider
 
 
 class HomeFragment : Fragment() {
@@ -309,4 +310,19 @@ class HomeFragment : Fragment() {
         return view
     }
 
+
+
+    private lateinit var sharedViewModel: SharedViewModel
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
+        // 观察imageUris对象的变化
+        sharedViewModel.ImageUris.observe(viewLifecycleOwner) { ImageUris ->
+            Log.d("imageuri","$ImageUris.size")
+            // 在这里更新UI或使用新的imageUris列表
+            // ...
+        }
+    }
 }
