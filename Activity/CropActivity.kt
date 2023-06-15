@@ -19,7 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
+//import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Random
@@ -218,7 +218,7 @@ class CropActivity : AppCompatActivity() {
             .map(charPool::get)
             .joinToString("")
     }
-
+/*
     private fun changeColor(){
 
         val color = (backView.background as ColorDrawable).color
@@ -232,5 +232,5 @@ class CropActivity : AppCompatActivity() {
             }
             .show(supportFragmentManager, "colorPicker")
 
-    }
+    }*/
 }
