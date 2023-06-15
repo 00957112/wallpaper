@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {//主頁面
     
     //screen
     var screenReceiver:ScreenStatusReceiver?=null
-    lateinit var button6:Button //screen
+    lateinit var button6:ToggleButton //screen
     lateinit var checkbox:CheckBox
     var uriList=mutableListOf<Uri>()//for random
     //screen=
@@ -133,25 +133,34 @@ class MainActivity : AppCompatActivity() {//主頁面
         }
 
         button6=findViewById(R.id.btn6)//for screen on/off
-        button6.setOnClickListener{
-            //init
-            val filter = IntentFilter().apply {
-                addAction(Intent.ACTION_SCREEN_ON)
-                addAction(Intent.ACTION_SCREEN_OFF)
+        button6.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                // 初始化广播接收器
+                val filter = IntentFilter().apply {
+                    addAction(Intent.ACTION_SCREEN_ON)
+                    addAction(Intent.ACTION_SCREEN_OFF)
+                }
+                screenReceiver = ScreenStatusReceiver()
+                registerReceiver(screenReceiver, filter)
+                // 初始化广播接收器
+                Log.e("???",uriList.toString())
+                val sharedPref = getSharedPreferences("screen", Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+                // 将 URI 列表转换为字符串列表
+                val stringList: MutableList<String> = uriList.map { it.toString() }.toMutableList()
+                editor.putString("items", Gson().toJson(stringList)) // 將 items 資料寫入
+                editor.putString("wallpaperWidth", Gson().toJson(wallpaperWidth)) // 將 items 資料寫入
+                editor.putString("wallpaperHeight", Gson().toJson(wallpaperHeight)) // 將 items 資料寫入
+                editor.apply() // 提交資料變更
+            } else {
+                Log.d("toggle","stop")
+                //unregisterReceiver(screenReceiver)
+                screenReceiver?.let {
+                    unregisterReceiver(it)
+                    screenReceiver = null
+                }
+                Log.d("toggle","stop over")
             }
-            screenReceiver = ScreenStatusReceiver()
-            registerReceiver(screenReceiver, filter)
-            Log.e("???",uriList.toString())
-            //send data = store
-            val sharedPref = getSharedPreferences("screen", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            // 将 URI 列表转换为字符串列表
-            val stringList: MutableList<String> = uriList.map { it.toString() }.toMutableList()
-            editor.putString("items", Gson().toJson(stringList)) // 將 items 資料寫入
-            editor.putString("wallpaperWidth", Gson().toJson(wallpaperWidth)) // 將 items 資料寫入
-            editor.putString("wallpaperHeight", Gson().toJson(wallpaperHeight)) // 將 items 資料寫入
-            editor.apply() // 提交資料變更
-
         }
         //screen=
 
