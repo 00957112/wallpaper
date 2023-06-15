@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:id="@+id/container">
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="submit"/>
+    <Button
+        android:layout_toEndOf="@id/btn"
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set"/>
+    <Button
+        android:layout_toEndOf="@id/btn2"
+        android:id="@+id/btn3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="wallpaper"/>
+
+    <ImageView
+        android:layout_below="@id/btn"
+        android:id="@+id/img_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <ImageView
+        android:layout_centerInParent="true"
+        android:id="@+id/wallView"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/btn"
+        android:background="@drawable/rectangle_frame"
+        android:translationZ="100dp" />
+
+    <EditText
+        android:id="@+id/sec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btn3"
+        android:ems="10"
+        android:hint="10"
+        android:inputType="number" />
+    <Button
+        android:layout_toEndOf="@id/sec"
+        android:id="@+id/btn4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="setsec"/>
+
+    <ToggleButton
+        android:id="@+id/btn5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="cleartime"
+        android:textOff="定時功能關"
+        android:textOn="定時功能開" />
+
+    <ToggleButton
+        android:id="@+id/btn6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/btn5"
+        android:text="screen"
+        android:textOff="亮屏切換功能關"
+        android:textOn="亮屏切換功能開" />
+
+    <CheckBox
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/btn6"
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="random" />
+
+
+</RelativeLayout>
