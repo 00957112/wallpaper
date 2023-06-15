@@ -19,7 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-//import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
+import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Random
@@ -203,9 +203,6 @@ class CropActivity : AppCompatActivity() {
 
         Toast.makeText(this, "Image saved successfully", Toast.LENGTH_SHORT).show()
         val imageUri = Uri.fromFile(imageFile)
-
-
-
         val intent = Intent()
         intent.putExtra("resulturi", imageUri.toString()) // 将保存的 Uri 名称作为额外数据放入 Intent
         setResult(Activity.RESULT_OK, intent) // 设置结果为 RESULT_OK
@@ -221,7 +218,7 @@ class CropActivity : AppCompatActivity() {
             .map(charPool::get)
             .joinToString("")
     }
-/*
+
     private fun changeColor(){
 
         val color = (backView.background as ColorDrawable).color
@@ -235,5 +232,5 @@ class CropActivity : AppCompatActivity() {
             }
             .show(supportFragmentManager, "colorPicker")
 
-    }*/
+    }
 }
