@@ -55,6 +55,13 @@ class MainActivity : AppCompatActivity() {//主頁面
     val dataList=mutableListOf<Uri>()//for test, a list of Uri
     //RECEIVER=
     
+    //screen
+    var screenReceiver:ScreenStatusReceiver?=null
+    lateinit var button6:Button //screen
+    lateinit var checkbox:CheckBox
+    var uriList=mutableListOf<Uri>()//for random
+    //screen=
+    
     companion object {
         private const val NONE = 0
         private const val DRAG = 1
@@ -113,6 +120,40 @@ class MainActivity : AppCompatActivity() {//主頁面
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        //screen
+        checkbox=findViewById(R.id.checkBox)//for random
+        checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                uriList= dataList.shuffled() as MutableList<Uri>
+                Log.d("list",uriList.toString())
+            } else {
+                uriList=dataList
+            }
+        }
+
+        button6=findViewById(R.id.btn6)//for screen on/off
+        button6.setOnClickListener{
+            //init
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_ON)
+                addAction(Intent.ACTION_SCREEN_OFF)
+            }
+            screenReceiver = ScreenStatusReceiver()
+            registerReceiver(screenReceiver, filter)
+            Log.e("???",uriList.toString())
+            //send data = store
+            val sharedPref = getSharedPreferences("screen", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            // 将 URI 列表转换为字符串列表
+            val stringList: MutableList<String> = uriList.map { it.toString() }.toMutableList()
+            editor.putString("items", Gson().toJson(stringList)) // 將 items 資料寫入
+            editor.putString("wallpaperWidth", Gson().toJson(wallpaperWidth)) // 將 items 資料寫入
+            editor.putString("wallpaperHeight", Gson().toJson(wallpaperHeight)) // 將 items 資料寫入
+            editor.apply() // 提交資料變更
+
+        }
+        //screen=
 
         imgview = findViewById(R.id.img_view)
         wallView=findViewById(R.id.wallView)
@@ -202,6 +243,7 @@ class MainActivity : AppCompatActivity() {//主頁面
         /*for test add list contain Uri*/
         dataList.add(Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/test1"))
         dataList.add(    Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/test2"))
+        uriList=dataList
 
         button5=findViewById(R.id.btn5)
         button5.setOnClickListener{
@@ -221,7 +263,7 @@ class MainActivity : AppCompatActivity() {//主頁面
             receiverIntent.putExtra("SECONDS", intervalInSeconds)//sec
             receiverIntent.putExtra("wallpaperWidth",wallpaperWidth)//size for img clip
             receiverIntent.putExtra("wallpaperHeight",wallpaperHeight)//size
-            receiverIntent.putParcelableArrayListExtra("Uri",ArrayList<Uri>( dataList))//list can like this way to transport list
+            receiverIntent.putParcelableArrayListExtra("Uri",ArrayList<Uri>( uriList))//list can like this way to transport list
             pendingIntent = PendingIntent.getBroadcast(this, 0, receiverIntent, 0)//set
             if(intervalInSeconds<60)intervalInSeconds=60//easy way to set limit
             val intervalMillis = intervalInSeconds*1000 // sec->millisecond = every that time to work
