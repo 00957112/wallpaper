@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:id="@+id/container">
+
     <Button
         android:id="@+id/btn"
         android:layout_width="wrap_content"
@@ -35,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_below="@id/btn"
-        android:background="@drawable/bk_style"
+        android:background="@drawable/rectangle_frame"
         android:translationZ="100dp" />
 
 

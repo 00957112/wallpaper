@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:id="@+id/container">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:tabMode="fixed"
+        app:tabGravity="fill" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/tabLayout"
+        android:layout_marginTop="100dp"
+        android:layout_weight="1" />
+<!--    <Button-->
+<!--        android:layout_marginTop="@id/tabLayout"-->
+
+<!--        android:id="@+id/btn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="submit"/>-->
+<!--    <Button-->
+<!--        android:layout_toEndOf="@id/btn"-->
+<!--        android:id="@+id/btn2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="set"/>-->
+<!--    <Button-->
+<!--        android:layout_toEndOf="@id/btn2"-->
+<!--        android:id="@+id/btn3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="wallpaper"/>-->
+
+<!--    <ImageView-->
+<!--        android:layout_below="@id/btn"-->
+<!--        android:id="@+id/img_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        />-->
+
+<!--    <ImageView-->
+<!--        android:layout_centerInParent="true"-->
+<!--        android:id="@+id/wallView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_below="@id/btn"-->
+<!--        android:background="@drawable/bk_style"-->
+<!--        android:translationZ="100dp" />-->
+
+
+</RelativeLayout>
