@@ -1,5 +1,8 @@
 package com.example.test
+
+import android.app.Activity
 import android.app.WallpaperManager
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -30,11 +33,8 @@ class PreviewActivity : AppCompatActivity() {
         // 设置删除按钮点击事件
         deleteButton = findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener {
-            // 执行删除操作
-            // ...
-
             // 关闭预览页面
-            finish()
+            setResultAndFinish(uri.toString())
         }
 
         // 设置设置为桌面壁纸按钮点击事件
@@ -54,18 +54,18 @@ class PreviewActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
 
-            // 关闭预览布局
-            finish()
+           finish()
         }
 
-
-        // 设置返回按钮的点击事件
-        class PreviewActivity : AppCompatActivity() {
-            override fun onBackPressed() {
-                // 关闭预览页面
-                finish()
-            }
-        }
+    }
+    override fun onBackPressed() {
+       finish()
+    }
+    private fun setResultAndFinish(uri: String) {
+        val resultIntent = Intent()
+        resultIntent.putExtra("resultKey", uri)
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 }
 
