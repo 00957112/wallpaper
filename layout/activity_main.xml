@@ -37,7 +37,8 @@
         android:layout_below="@id/btn"
         android:background="@drawable/bk_style"
         android:translationZ="100dp" />
-<EditText
+
+    <EditText
         android:id="@+id/sec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,5 +58,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="cleartime"/>
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/btn5"
+        android:id="@+id/btn6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="screen"/>
+
+    <CheckBox
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/btn6"
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="random" />
+
 
 </RelativeLayout>
