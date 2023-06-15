@@ -1,4 +1,5 @@
 package com.example.test
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -30,6 +31,7 @@ import android.graphics.Bitmap.CompressFormat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import java.io.OutputStreamWriter
 
 class SharedViewModel : ViewModel() {
     val ImageUris: MutableLiveData<MutableList<String>> = MutableLiveData()
@@ -43,6 +45,8 @@ class ListViewFragment : Fragment() {
     private lateinit var jsonFile: String
     companion object {
         private const val REQUEST_CODE_CROP = 1
+        private const val REQUEST_CODE_PREVIEW = 100
+
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,7 +71,7 @@ class ListViewFragment : Fragment() {
                 // 打开预览页面
                 val intent = Intent(requireContext(), PreviewActivity::class.java)
                 intent.putExtra("key2", uri.toString())
-                startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE_PREVIEW)
             }
         })
 
@@ -90,8 +94,14 @@ class ListViewFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CROP && resultCode == Activity.RESULT_OK) {
             val uri = data?.getStringExtra("resulturi")
+            Log.d("makeuri","mycatch${uri}")
             if (uri != null) {
                 ImageUris.add(uri)
+            }
+        }else if (requestCode == REQUEST_CODE_PREVIEW && resultCode == Activity.RESULT_OK) {
+            val uri = data?.getStringExtra("resultKey")
+            if(uri != null){
+                ImageUris.remove(uri)
             }
         }
     }
@@ -102,13 +112,8 @@ class ListViewFragment : Fragment() {
             val cropIntent = Intent(requireActivity(), CropActivity::class.java)
             cropIntent.putExtra("crop", uri.toString())
             startActivityForResult(cropIntent, REQUEST_CODE_CROP)
-            /*val intent = Intent(requireActivity(), CropActivity::class.java)
-            intent.putExtra("crop", uri.toString())
-            startActivity(intent)*/
         }
     }
-
-
 
     class YourAdapter(private val dataList: MutableList<String>) : RecyclerView.Adapter<YourAdapter.ViewHolder>() {
 
@@ -235,4 +240,28 @@ class ListViewFragment : Fragment() {
         bitmap.compress(CompressFormat.PNG, 100, outputStream)
         outputStream.close()
     }
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        writeImageUrisToJson()
+    }
+    private fun writeImageUrisToJson() {
+        val jsonArray = JSONArray(ImageUris)
+        val jsonString = jsonArray.toString()
+
+        try {
+            val fileOutputStream = requireContext().openFileOutput(JSON_FILE_NAME, Context.MODE_PRIVATE)
+            val outputStreamWriter = OutputStreamWriter(fileOutputStream)
+            outputStreamWriter.write(jsonString)
+            outputStreamWriter.close()
+            Log.d("json",ImageUris.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 }
+
