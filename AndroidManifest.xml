@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.INTERNET" />
-    
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-feature
         android:name="android.software.live_wallpaper"
         android:required="true" >
@@ -31,6 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PreviewActivity" />
+        <activity android:name=".CropActivity" />
         <service
             android:name=".MyWallpaperService"
             android:enabled="true"
@@ -47,6 +48,15 @@
                 android:resource="@xml/wallpaper" />
         </service>
         <receiver android:name=".AlarmReceiver" />
+        <receiver
+            android:name=".ScreenStatusReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
