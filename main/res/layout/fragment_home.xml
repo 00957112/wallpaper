@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/container">
 
-    <Button
+   <!-- <Button
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,9 +14,8 @@
         android:id="@+id/btn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="set"/>
+        android:text="set"/>-->
     <Button
-        android:layout_toEndOf="@id/btn2"
         android:id="@+id/btn3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +31,7 @@
 
     <LinearLayout
 
-        android:layout_below="@id/btn"
+        android:layout_below="@id/btn3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -62,7 +61,7 @@
         android:id="@+id/wallView"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_below="@id/btn"
+        android:layout_below="@id/btn3"
         android:background="@drawable/rectangle_frame"
         android:translationZ="100dp" />
 
