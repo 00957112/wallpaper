@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:id="@+id/container">
 
     <Button
@@ -24,11 +23,39 @@
         android:text="wallpaper"/>
 
     <ImageView
-        android:layout_below="@id/btn"
+
+        android:layout_above="@id/btn3"
         android:id="@+id/img_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
+
+    <LinearLayout
+
+        android:layout_below="@id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/sec"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="10"
+            android:inputType="number"
+            android:minHeight="48dp" />
+
+        <ToggleButton
+            android:id="@+id/btn5"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cleartime"
+            android:textOff="定時功能關"
+            android:textOn="定時功能開" />
+    </LinearLayout>
 
     <ImageView
         android:layout_centerInParent="true"
@@ -39,36 +66,18 @@
         android:background="@drawable/rectangle_frame"
         android:translationZ="100dp" />
 
-    <EditText
-        android:id="@+id/sec"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/btn3"
-        android:ems="10"
-        android:hint="10"
-        android:inputType="number" />
-    <Button
+ <!--   <Button
         android:layout_toEndOf="@id/sec"
         android:id="@+id/btn4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="setsec"/>
-
-    <ToggleButton
-        android:id="@+id/btn5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="cleartime"
-        android:textOff="定時功能關"
-        android:textOn="定時功能開" />
+        android:text="setsec"/>-->
 
     <ToggleButton
         android:id="@+id/btn6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/btn5"
         android:text="screen"
         android:textOff="亮屏切換功能關"
         android:textOn="亮屏切換功能開" />

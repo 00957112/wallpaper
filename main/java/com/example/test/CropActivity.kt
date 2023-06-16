@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -19,7 +20,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-//import me.jfenn.colorpickerdialog.dialogs.ColorPickerDialog
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Random
@@ -78,13 +78,6 @@ class CropActivity : AppCompatActivity() {
             .into(imageView)
         // 设置图片的触摸事件
         imageView.setOnTouchListener { _, event ->
-//            val frameRect = Rect(frameView.left, frameView.top, frameView.right, frameView.bottom)
-//            val imageRect = Rect(imageView.left, imageView.top, imageView.right, imageView.bottom)
-//
-//            if (Rect.intersects(frameRect, imageRect)) {
-//                // 重叠区域存在，允许缩放或平移操作
-//                // 执行相应的缩放或平移操作代码
-//            }
             handleTouchEvent(event)
             true
         }
@@ -106,6 +99,17 @@ class CropActivity : AppCompatActivity() {
         })
         frameLayout = findViewById(R.id.frameLayout)
         colorButton = findViewById(R.id.colorButton)
+        var currentColor:Int = 0
+        colorButton.setOnClickListener {
+            val rgbaPicker = RGBAPickerDialogFragment(currentColor)
+            rgbaPicker.setOnColorChangedListener { color ->
+                currentColor = color
+                Log.d("nowcolor","$currentColor")
+                backView.setBackgroundColor(color)
+            }
+            rgbaPicker.show(supportFragmentManager, "RGBAPickerDialog")
+        }
+
 
         saveButton = findViewById(R.id.saveButton)
         saveButton.setOnClickListener {
@@ -173,6 +177,7 @@ class CropActivity : AppCompatActivity() {
 
         // 创建一个与 FrameView 相同大小的 Bitmap
         val bitmap = Bitmap.createBitmap(frameView.width, frameView.height, Bitmap.Config.ARGB_8888)
+        bitmap.eraseColor(Color.TRANSPARENT)
 
         // 创建一个 Canvas，并将其与 Bitmap 关联
         val canvas = Canvas(bitmap)
@@ -203,9 +208,6 @@ class CropActivity : AppCompatActivity() {
 
         Toast.makeText(this, "Image saved successfully", Toast.LENGTH_SHORT).show()
         val imageUri = Uri.fromFile(imageFile)
-
-
-
         val intent = Intent()
         intent.putExtra("resulturi", imageUri.toString()) // 将保存的 Uri 名称作为额外数据放入 Intent
         setResult(Activity.RESULT_OK, intent) // 设置结果为 RESULT_OK
@@ -221,19 +223,9 @@ class CropActivity : AppCompatActivity() {
             .map(charPool::get)
             .joinToString("")
     }
-/*
-    private fun changeColor(){
 
-        val color = (backView.background as ColorDrawable).color
 
-        ColorPickerDialog()
-            .withAlphaEnabled(false)
-            .withPresets()
-            .withColor(color) // the default / initial color
-            .withListener { _, color ->
-                backView.setBackgroundColor(color)
-            }
-            .show(supportFragmentManager, "colorPicker")
 
-    }*/
 }
+
+
