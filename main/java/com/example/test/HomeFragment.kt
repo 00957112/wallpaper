@@ -35,7 +35,7 @@ import android.content.pm.PackageManager
 import android.widget.*
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
-
+import android.widget.Toast
 
 class HomeFragment : Fragment() {
     lateinit var button:Button
@@ -170,23 +170,29 @@ class HomeFragment : Fragment() {
         button6=view.findViewById(R.id.btn6)
         button6.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                // 初始化广播接收器
-                val filter = IntentFilter().apply {
-                    addAction(Intent.ACTION_SCREEN_ON)
-                    addAction(Intent.ACTION_SCREEN_OFF)
+                if(uriList.size==0){
+                    buttonView.isChecked = false
+                    Toast.makeText(requireContext(), "尚未加入圖片，請移置資料夾新增桌布圖", Toast.LENGTH_SHORT).show()
+                }else{
+                    // 初始化广播接收器
+                    val filter = IntentFilter().apply {
+                        addAction(Intent.ACTION_SCREEN_ON)
+                        addAction(Intent.ACTION_SCREEN_OFF)
+                    }
+                    screenReceiver = ScreenStatusReceiver()
+                    requireContext().registerReceiver(screenReceiver, filter)
+                    // 初始化广播接收器
+                    Log.e("???",uriList.toString())
+                    val sharedPref =requireContext().getSharedPreferences("screen", Context.MODE_PRIVATE)
+                    val editor = sharedPref.edit()
+                    // 将 URI 列表转换为字符串列表
+                    val stringList: MutableList<String> = uriList.map { it.toString() }.toMutableList()
+                    editor.putString("items", Gson().toJson(stringList)) // 將 items 資料寫入
+                    editor.putString("wallpaperWidth", Gson().toJson(wallpaperWidth)) // 將 items 資料寫入
+                    editor.putString("wallpaperHeight", Gson().toJson(wallpaperHeight)) // 將 items 資料寫入
+                    editor.apply() // 提交資料變更
                 }
-                screenReceiver = ScreenStatusReceiver()
-                requireContext().registerReceiver(screenReceiver, filter)
-                // 初始化广播接收器
-                Log.e("???",uriList.toString())
-                val sharedPref =requireContext().getSharedPreferences("screen", Context.MODE_PRIVATE)
-                val editor = sharedPref.edit()
-                // 将 URI 列表转换为字符串列表
-                val stringList: MutableList<String> = uriList.map { it.toString() }.toMutableList()
-                editor.putString("items", Gson().toJson(stringList)) // 將 items 資料寫入
-                editor.putString("wallpaperWidth", Gson().toJson(wallpaperWidth)) // 將 items 資料寫入
-                editor.putString("wallpaperHeight", Gson().toJson(wallpaperHeight)) // 將 items 資料寫入
-                editor.apply() // 提交資料變更
+
             } else {
                 Log.d("toggle","stop")
                 //unregisterReceiver(screenReceiver)
@@ -210,6 +216,10 @@ class HomeFragment : Fragment() {
         button5=view.findViewById(R.id.btn5)
         button5.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
+                if(uriList.size==0){
+                    buttonView.isChecked = false
+                    Toast.makeText(requireContext(), "尚未加入圖片，請移置資料夾新增桌布圖", Toast.LENGTH_SHORT).show()
+                }else{
                 try{
                     intervalInSeconds = timeSet.text.toString().toLong() // get user set time(sec)
                     alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
@@ -230,9 +240,11 @@ class HomeFragment : Fragment() {
                         pendingIntent //set
                     )
                 }catch (e: NumberFormatException) {
+                    Toast.makeText(requireContext(), "請輸入間隔時長(限60秒以上)", Toast.LENGTH_SHORT).show()
+                    buttonView.isChecked = false
                     Log.e("wrong","no input ")
                     e.printStackTrace()
-                }
+                }}
             } else {
                 try{
                     alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
@@ -251,6 +263,10 @@ class HomeFragment : Fragment() {
         //RECEIVER=
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             Log.d("result",result.resultCode.toString())
+            if(result.resultCode==0){
+                Toast.makeText(requireContext(), "未設置桌布，已返回初始桌布", Toast.LENGTH_SHORT).show()
+
+            }
             //            if (result.resultCode == Activity.RESULT_OK) {
 //                val data: Intent? = result.data
 //                // 在這裡處理活動結果
@@ -280,7 +296,7 @@ class HomeFragment : Fragment() {
                 // startActivityForResult(intent, REQUEST_CODE_WALLPAPER)
             }
         }
-
+/*
         val imagePicker =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 uri?.let {//開圖庫取圖片
@@ -345,7 +361,7 @@ class HomeFragment : Fragment() {
                         .into(imgview)
                     //++?
                 }
-            }
+            }*/
 
 
         button3 = view.findViewById(R.id.btn3)
@@ -354,11 +370,13 @@ class HomeFragment : Fragment() {
             //WallpaperManager.getInstance(this).clear()
             imagePicker2.launch("image/*")//按鈕取圖庫照片//按鈕取圖庫照片
         }
+
+        /*
         button = view.findViewById(R.id.btn)
         button.setOnClickListener {
             imagePicker.launch("image/*")//按鈕取圖庫照片
         }
-
+        */*/
         var mode = NONE
         var mLastTouchX = 1.0f
         var mLastTouchY = 1.0f
@@ -422,6 +440,7 @@ class HomeFragment : Fragment() {
             Log.d("wallview","${wallView.width},${wallView.height}")
             true
         }//touch
+        /*
         button2 = view.findViewById(R.id.btn2)
         button2.setOnClickListener {
             // 計算出裁剪區域
@@ -461,7 +480,7 @@ class HomeFragment : Fragment() {
                 e.printStackTrace()
             }
 
-        }//btn2
+        }//btn2*/
         return view
     }
 
