@@ -40,7 +40,6 @@ import android.widget.Toast
 class HomeFragment : Fragment() {
     lateinit var button:Button
     lateinit var button4:ImageView
-    //lateinit var button2:Button
     lateinit var button3:Button
     lateinit var button9:ImageView
     lateinit var imgview:ImageView
@@ -52,7 +51,6 @@ class HomeFragment : Fragment() {
     private var cropHeight:Int=0
     private var wallpaperWidth:Int=0
     private var wallpaperHeight:Int=0
-    //private var mScaleFactor = 1.0f
 
     lateinit var button5: ToggleButton //clear Timer
     lateinit var timeSet: EditText //set Timer number
@@ -70,12 +68,10 @@ class HomeFragment : Fragment() {
     lateinit var button6:ToggleButton //screen
     lateinit var checkbox:CheckBox
     var uriList=mutableListOf<Uri>()//for test, a list of Uri
-/*
-    companion object {
-        private const val NONE = 0
-        private const val DRAG = 1
-        private const val ZOOM = 2
-    }*/
+    private var selectstate=0
+    private var timersetnow=false
+    private var screensetnow=false
+
 
     private val PERMISSION_REQUEST_CODE = 100
     private var canimg:Boolean = true
@@ -93,12 +89,10 @@ class HomeFragment : Fragment() {
                 PERMISSION_REQUEST_CODE
             )
         } else {
-            // 已经获得了读取外部存储的权限
-            // 进行相应的操作
         }
     }
 
-    // 处理权限请求结果
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -107,8 +101,6 @@ class HomeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 用户授予了读取外部存储的权限
-                // 进行相应的操作
             } else {
                 canimg = false
             }
@@ -136,13 +128,8 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
-
-
-        // 观察imageUris对象的变化
         sharedViewModel.ImageUris.observe(viewLifecycleOwner) { ImageUris ->
             Log.d("imageuri","$ImageUris.size")
-            // 在这里更新UI或使用新的imageUris列表
-            // ...
             dataList=ImageUris.map { Uri.parse(it) }.toMutableList()
             Log.d("imageuri","$dataList")
             if(ckbox){
@@ -175,12 +162,21 @@ class HomeFragment : Fragment() {
         }
 
         button6=view.findViewById(R.id.btn6)
-        button6.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                if(uriList.size==0){
-                    buttonView.isChecked = false
+        button6.setOnClickListener{
+
+            if (button6.isChecked) {
+                if(selectstate==2){
+                    button6.isChecked = false
+                    Toast.makeText(requireContext(), "請關閉計時功能", Toast.LENGTH_SHORT).show()
+                }
+                else if(uriList.size==0&&!screensetnow){
+                    button6.isChecked = false
+                    Log.d("nono","${uriList.size}")
                     Toast.makeText(requireContext(), "尚未加入圖片，請移置資料夾新增桌布圖", Toast.LENGTH_SHORT).show()
-                }else{
+                }else if(!screensetnow){
+                    screensetnow=true
+                    button5.isEnabled = false
+                    selectstate=1
                     // 初始化广播接收器
                     val filter = IntentFilter().apply {
                         addAction(Intent.ACTION_SCREEN_ON)
@@ -188,8 +184,9 @@ class HomeFragment : Fragment() {
                     }
                     screenReceiver = ScreenStatusReceiver()
                     requireContext().registerReceiver(screenReceiver, filter)
+                    Toast.makeText(requireContext(), "開啟功能", Toast.LENGTH_SHORT).show()
                     // 初始化广播接收器
-                    Log.e("???",uriList.toString())
+                    //Log.e("???",uriList.toString())
                     val sharedPref =requireContext().getSharedPreferences("screen", Context.MODE_PRIVATE)
                     val editor = sharedPref.edit()
                     // 将 URI 列表转换为字符串列表
@@ -201,33 +198,42 @@ class HomeFragment : Fragment() {
                 }
 
             } else {
-                Log.d("toggle","stop")
-                //unregisterReceiver(screenReceiver)
+                selectstate=0
+                screensetnow=false
+                //Log.d("toggle","stop")
                 screenReceiver?.let {
                     requireContext().unregisterReceiver(it)
                     screenReceiver = null
                 }
-                Log.d("toggle","stop over")
+                Toast.makeText(requireContext(), "關閉功能", Toast.LENGTH_SHORT).show()
+                button5.isEnabled = true
+                //Log.d("toggle","stop over")
             }
         }
 
         //RECEIVER
         timeSet=view.findViewById(R.id.sec) //Timerset
-        /*for test add list contain Uri*/
-       /* dataList.add(Uri.parse("android.resource://" + requireContext().packageName + "/drawable/test1"))
-        dataList.add(    Uri.parse("android.resource://" + requireContext().packageName + "/drawable/test2"))
-        */uriList=dataList
+        uriList=dataList
         //RECEIVER=
 
         //RECEIVER
         button5=view.findViewById(R.id.btn5)
-        button5.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                if(uriList.size==0){
-                    buttonView.isChecked = false
+        button5.setOnClickListener {
+            if (button5.isChecked) {
+                if(selectstate==1){
+                    button5.isChecked = false
+                    Toast.makeText(requireContext(), "請關閉計時功能", Toast.LENGTH_SHORT).show()
+                }
+                else if(uriList.size==0&&!screensetnow){
+                    Log.d("nono","${uriList.size}")
+                    button5.isChecked = false
                     Toast.makeText(requireContext(), "尚未加入圖片，請移置資料夾新增桌布圖", Toast.LENGTH_SHORT).show()
-                }else{
+                }else if(!timersetnow){
                 try{
+                    //Log.d("nono","stop6")
+                    timersetnow=true
+                    button6.isEnabled = false
+                    selectstate=2
                     intervalInSeconds = timeSet.text.toString().toLong() // get user set time(sec)
                     alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
                     receiverIntent = Intent(requireContext(), AlarmReceiver::class.java) //set
@@ -236,7 +242,10 @@ class HomeFragment : Fragment() {
                     receiverIntent.putExtra("wallpaperHeight",wallpaperHeight)//size
                     receiverIntent.putParcelableArrayListExtra("Uri",ArrayList<Uri>( uriList))//list can like this way to transport list
                     pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, receiverIntent, PendingIntent.FLAG_IMMUTABLE)//set
-                    if(intervalInSeconds<60)intervalInSeconds=60//easy way to set limit
+                    if(intervalInSeconds<60){
+                        intervalInSeconds=60//easy way to set limit
+                        Toast.makeText(requireContext(), "小於60秒，將設置為60秒", Toast.LENGTH_SHORT).show()
+                    }
                     val intervalMillis = intervalInSeconds*1000 // sec->millisecond = every that time to work
                     val startTimeMillis = System.currentTimeMillis() //first run = now
 
@@ -246,13 +255,19 @@ class HomeFragment : Fragment() {
                         intervalMillis,//during
                         pendingIntent //set
                     )
+                    Toast.makeText(requireContext(), "開啟功能", Toast.LENGTH_SHORT).show()
                 }catch (e: NumberFormatException) {
                     Toast.makeText(requireContext(), "請輸入間隔時長(限60秒以上)", Toast.LENGTH_SHORT).show()
-                    buttonView.isChecked = false
-                    Log.e("wrong","no input ")
+                    button5.isChecked = false
+                    button6.isEnabled = true
+                    selectstate=0
+                    timersetnow=false
+                    //Log.e("wrong","no input ")
                     e.printStackTrace()
                 }}
             } else {
+                button6.isEnabled = true
+                selectstate=0
                 try{
                     alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager //get
                     receiverIntent = Intent(requireContext(), AlarmReceiver::class.java) //set
@@ -260,11 +275,12 @@ class HomeFragment : Fragment() {
 
                     // cancel = stop Timer
                     alarmManager.cancel(pendingIntent)//must use that used intent or not work
-                    Log.d("cancel","stop")
+                    //Log.d("cancel","stop")
                 }catch (e: IOException) {
-                    Log.e("cancel","stop")
+                    //Log.e("cancel","stop")
                     e.printStackTrace()
                 }
+                Toast.makeText(requireContext(), "關閉功能", Toast.LENGTH_SHORT).show()
             }
         }
         //RECEIVER=
@@ -272,35 +288,18 @@ class HomeFragment : Fragment() {
             Log.d("result",result.resultCode.toString())
             if(result.resultCode==0){
                 Toast.makeText(requireContext(), "未設置桌布，已返回初始桌布", Toast.LENGTH_SHORT).show()
-
             }
-            //            if (result.resultCode == Activity.RESULT_OK) {
-//                val data: Intent? = result.data
-//                // 在這裡處理活動結果
-//            }
         }
 
         val imagePicker2 = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {//開圖庫取圖片
-                //val uri =
-                // Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/drawable/testgif")
                 val intentdata = Intent(requireContext(), MyWallpaperService::class.java)
                 intentdata.putExtra("key", uri.toString())
                 requireContext().startService(intentdata)
-                //val wallpaperService = MyWallpaperService()
                 WallpaperManager.getInstance(requireContext()).clear()
-                /*val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-                intent.putExtra(
-                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                    ComponentName(this, MyWallpaperService::class.java)
-                )
-                startActivity(intent)*/
-                //val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
                 intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(requireContext(), MyWallpaperService::class.java))
                 // 在需要啟動另一個活動時
-                //val intent = Intent(this, AnotherActivity::class.java)
                 startForResult.launch(intent)
-                // startActivityForResult(intent, REQUEST_CODE_WALLPAPER)
             }
         }
 
@@ -321,7 +320,7 @@ class HomeFragment : Fragment() {
                     val drawable = imgview.drawable
                     imgview.adjustViewBounds = true
                     WallpaperShow((drawable!! as BitmapDrawable).bitmap)
-                    //++?
+
                     Glide.with(this)
                         .asDrawable()
                         .load(uri)
@@ -366,16 +365,13 @@ class HomeFragment : Fragment() {
                             }
                         })
                         .into(imgview)
-                    //++?
                 }
             }
 
         button9 = view.findViewById(R.id.btn3)
         Glide.with(requireContext()).asGif().load(R.drawable.image_forgif).into(button9)
-
         button9.setOnClickListener {
             Log.d("wall", "按下btn3")
-            //WallpaperManager.getInstance(this).clear()
             imagePicker2.launch("image/*")//按鈕取圖庫照片//按鈕取圖庫照片
         }
 
@@ -385,112 +381,6 @@ class HomeFragment : Fragment() {
             imagePicker.launch("image/*")//按鈕取圖庫照片
         }
 
-        /*
-        var mode = NONE
-        var mLastTouchX = 1.0f
-        var mLastTouchY = 1.0f
-        // 設置觸摸事件監聽器
-        imgview.setOnTouchListener { _, event ->
-            when (event.action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_DOWN -> {
-
-                    mLastTouchX = event.x
-                    mLastTouchY = event.y
-                    mode = DRAG
-                    Log.d("QQ", "one p")
-                }
-                MotionEvent.ACTION_POINTER_DOWN -> {
-
-                    val distance = getDistance(event)
-                    mScaleFactor = imgview.scaleX / distance
-                    mode = ZOOM
-                    Log.d("QQ", "two p")
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    if (mode == DRAG) {
-                        Log.d("QQ", "move one")
-                        val translationX = event.x - mLastTouchX
-                        val translationY = event.y - mLastTouchY
-                        imgview.translationX += translationX
-                        imgview.translationY += translationY
-
-                    } else if (mode == ZOOM) {
-                        Log.d("QQ", "move two")
-
-                        val distance = getDistance(event)
-
-                        val newScaleFactor = distance * mScaleFactor
-                        imgview.scaleX = newScaleFactor
-                        imgview.scaleY = newScaleFactor
-                    }
-
-                }
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
-                    mode = NONE
-                    mScaleFactor = 1.0f
-                }
-            }
-            val location = IntArray(2)
-            imgview.getLocationInWindow(location)
-
-            val x = location[0]
-            val y = location[1]
-            Log.d("size","${x},${y}")
-            //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
-            Log.d("view","${imgview.width},${imgview.height}")
-            //imgview.getLeft() imgview.getTop() //不知道是甚麼值 好像是初始時的左和上
-            val location2 = IntArray(2)
-            wallView.getLocationOnScreen(location2)
-
-            val xx = location[0]
-            val yy = location[1]
-            Log.d("wallsize","${xx},${yy}")//左上角
-            //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
-            Log.d("wallview","${wallView.width},${wallView.height}")
-            true
-        }//touch*/
-
-        /*
-        button2 = view.findViewById(R.id.btn2)
-        button2.setOnClickListener {
-            // 計算出裁剪區域
-            Log.d("QQQQ","set")
-            val location2 = IntArray(2)
-            wallView.getLocationOnScreen(location2)
-            val wallLeft = location2[0]
-            val wallTop = location2[1]
-            val clipRect = Rect(wallLeft, wallTop, wallLeft + wallView.width, wallTop + wallView.height)
-            Log.d("getp","左上角:${clipRect.left},${clipRect.top}")
-            Log.d("getp","寬高:${ clipRect.width()},${clipRect.height()}")
-            Log.d("getp","右下角:${wallLeft + wallView.width},${wallTop + wallView.height}")
-            val relativeLayout = view.findViewById<RelativeLayout>(R.id.container)
-            // 開啟 drawingCache
-            relativeLayout.isDrawingCacheEnabled = true
-            relativeLayout.buildDrawingCache()
-
-            try {
-                //擷取畫面
-                val pic=relativeLayout.drawingCache
-                if(pic==null) Log.d("QQQQ","nono")
-                val location3 = IntArray(2)//取偏差值
-                button2.getLocationOnScreen(location3)
-                val btntop = location3[1]
-                if(pic!=null) {
-                    Log.d("QQQQ","setto")
-                    val bitmap = Bitmap.createBitmap(pic)
-                    relativeLayout.isDrawingCacheEnabled = false
-                    // 裁剪出要保存的區域
-                    var statusBarHeight=btntop //位置調校
-                    Log.d("QQQQ","上面區:${clipRect.top}-${statusBarHeight}->${clipRect.top-statusBarHeight}")
-                    val croppedBitmap = Bitmap.createBitmap(bitmap, clipRect.left, clipRect.top-statusBarHeight, clipRect.width(), clipRect.height())
-                    Log.d("QQQQ","切圖:${croppedBitmap.width},${croppedBitmap.height}")
-                    WallpaperShow(croppedBitmap)
-                }
-            }catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-        }//btn2*/
         return view
     }
 

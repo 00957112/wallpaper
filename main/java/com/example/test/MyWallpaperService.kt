@@ -34,8 +34,8 @@ class MyWallpaperService: WallpaperService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val data = intent?.getStringExtra("key")
-        Log.d("paperwall","onStartCommand")
-        Log.d("string","${data}")
+        //Log.d("paperwall","onStartCommand")
+        //Log.d("string","${data}")
 
         val sharedPref = getSharedPreferences("record", Context.MODE_PRIVATE)
         val editor = sharedPref.edit()
@@ -62,7 +62,7 @@ class MyWallpaperService: WallpaperService() {
 
         @RequiresApi(Build.VERSION_CODES.P)
         override fun onCreate(surfaceHolder: SurfaceHolder?) {
-            Log.d("paperwall","onCreate")
+            //Log.d("paperwall","onCreate")
             super.onCreate(surfaceHolder)
 
             val sharedPref = getSharedPreferences("record", Context.MODE_PRIVATE)
@@ -70,24 +70,24 @@ class MyWallpaperService: WallpaperService() {
             var items:String?=null
             if (itemsJson != null)
                 items = Gson().fromJson(itemsJson, object : TypeToken<String>() {}.type)
-            Log.d("uri","${items}")
+            //Log.d("uri","${items}")
 
 
             val inputStream: InputStream? = contentResolver.openInputStream(Uri.parse(items))
             val yourDrawable = Drawable.createFromStream(inputStream, items.toString())
 
             if (yourDrawable is AnimatedImageDrawable) {
-                Log.d("OKK","YESSSSSSSSSSSSSS")
+                //Log.d("OKK","YESSSSSSSSSSSSSS")
                 imgOrgif=false
                 gifDrawable?.stop() // 停止播放 GIF 圖片
                 gifDrawable=yourDrawable
                 gifDrawable!!.start()
             }else if(yourDrawable is Drawable){
-                Log.d("OKK","YES")
+                //Log.d("OKK","YES")
                 imgOrgif=true
                 drawable=yourDrawable
             }
-            Log.d("paperwall","imgOrgif:${imgOrgif}")
+            //Log.d("paperwall","imgOrgif:${imgOrgif}")
             holder = surfaceHolder
             handler=Handler(Looper.getMainLooper())
         }
@@ -130,29 +130,25 @@ class MyWallpaperService: WallpaperService() {
 
                 handler?.removeCallbacks(drawGIF)
                 handler?.postDelayed(drawGIF, frameDuration.toLong())
-            //}
+
         }
 
         override fun onSurfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-            Log.d("wall","onSurfaceChanged")
+            //Log.d("wall","onSurfaceChanged")
             handler!!.removeCallbacks(drawGIF)
             super.onSurfaceChanged(holder, format, width, height)
         }
         override fun onSurfaceDestroyed(holder: SurfaceHolder?) {
-            Log.d("canvas","onSurfaceDestroyed")
+            //Log.d("canvas","onSurfaceDestroyed")
 
         }
         override fun onVisibilityChanged(visible: Boolean) {
-            Log.d("wall","onVisibilityChanged")
+            //Log.d("wall","onVisibilityChanged")
             this.visible = visible
             if (visible) {
                 handler!!.post(drawGIF)
             } else {
-                Log.d("wall","preview")
-                //handler!!.post(drawGIF)
-                //WallpaperManager.getInstance(this@MyWallpaperService).clear()
-                //val canvas: Canvas = holder!!.lockCanvas()
-                //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR) // 清除畫布內容
+                //Log.d("wall","preview")
                 handler!!.removeCallbacks(drawGIF)
             }
         }

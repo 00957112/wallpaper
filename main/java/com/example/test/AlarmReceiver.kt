@@ -37,7 +37,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private  fun dowall(){
         counter=(counter%(dataList.size))//count 0~data length
 
-        Log.d("OKK","$counter")
+        //Log.d("OKK","$counter")
 
         /*uri to Drawable*/
         val items=dataList[counter]
@@ -46,7 +46,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         /*set and check*/
         if(yourDrawable is Drawable){
-            Log.d("OKK","YES")
+            //Log.d("OKK","YES")
             drawable=yourDrawable
         }
 
@@ -54,9 +54,8 @@ class AlarmReceiver : BroadcastReceiver() {
         counter++
     }
     override fun onReceive(context: Context, intent: Intent) {//first
-        Log.d("alarm","start")
+        //Log.d("alarm","start")
         sec= intent!!.getLongExtra("SECONDS",0) //time millisecond
-        //if(sec<3){sec=3}
         wallpaperWidth =intent.getIntExtra("wallpaperWidth",0)//size
         wallpaperHeight =intent.getIntExtra("wallpaperHeight",0)
         val dataArray = intent.getParcelableArrayListExtra<Uri>("Uri")//uri list receive array

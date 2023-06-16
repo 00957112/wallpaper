@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#CCFFF0D5">
 
     <ImageView
         android:id="@+id/previewImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:layout_margin="10dp" />
 
     <LinearLayout
         android:id="@+id/buttonLayout"
@@ -21,14 +22,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Delete" />
+            android:background="@drawable/crop_but"
+            android:text="Delete"
+            android:textColor="@color/white"/>
 
         <Button
             android:id="@+id/wallpaperButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Set as Wallpaper" />
+            android:background="@drawable/crop_but"
+            android:text="Set as Wallpaper"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
 </RelativeLayout>

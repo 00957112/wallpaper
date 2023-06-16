@@ -27,7 +27,7 @@ class ScreenStatusReceiver : BroadcastReceiver() {
     private  fun dowall(){
         ScreenStatusReceiver.counter =(ScreenStatusReceiver.counter %(uriList.size))//count 0~data length
 
-        Log.d("OKK","${ScreenStatusReceiver.counter}")
+        //Log.d("OKK","${ScreenStatusReceiver.counter}")
 
         /*uri to Drawable*/
         val items=uriList[ScreenStatusReceiver.counter]
@@ -36,7 +36,7 @@ class ScreenStatusReceiver : BroadcastReceiver() {
 
         /*set and check*/
         if(yourDrawable is Drawable){
-            Log.d("OKK","YES")
+            //Log.d("OKK","YES")
             drawable=yourDrawable
         }
 
@@ -50,12 +50,12 @@ class ScreenStatusReceiver : BroadcastReceiver() {
             Intent.ACTION_SCREEN_OFF -> {
                 // 屏幕关闭时的逻辑处理
                 wasScreenOn = false
-                Log.e("screen","off")
+                //Log.e("screen","off")
             }
             Intent.ACTION_SCREEN_ON -> {
                 // 屏幕开启时的逻辑处理
                 wasScreenOn = true
-                Log.e("screen","on")
+                //Log.e("screen","on")
 
                 val sharedPref = context.getSharedPreferences("screen", Context.MODE_PRIVATE)
                 var itemsJson = sharedPref.getString("items", null)
@@ -84,28 +84,5 @@ class ScreenStatusReceiver : BroadcastReceiver() {
         private lateinit var receivercontext:Context
 
     }
-
-    /*override fun onReceive(context: Context, intent: Intent) {
-        if(isScreenOn(context)){
-
-            Log.i("ScreenStatusReceiver", "Screen is ON")
-        }else {
-            Log.i("ScreenStatusReceiver", "Screen is OFF")
-        }
-        when (intent.action) {
-            Intent.ACTION_USER_PRESENT  -> {
-                // 屏幕开启时的操作
-                Log.i("ScreenStatusReceiver", "Screen is ON")
-            }
-            Intent.ACTION_SCREEN_OFF -> {
-                // 屏幕关闭时的操作
-                Log.i("ScreenStatusReceiver", "Screen is OFF")
-            }
-        }
-    }
-    fun isScreenOn(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-        return powerManager.isInteractive
-    }*/
 
 }

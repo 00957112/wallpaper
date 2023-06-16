@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yellow">#FDFFFB07</color>
     <color name="bar_color">#889CBB</color>
+    <color name="red">#ED8C8C</color>
+    <color name="green">#73DA73</color>
+    <color name="blue">#87A9ED</color>
 </resources>
