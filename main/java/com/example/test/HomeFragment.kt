@@ -39,17 +39,18 @@ import android.widget.Toast
 
 class HomeFragment : Fragment() {
     lateinit var button:Button
-    lateinit var button2:Button
+    //lateinit var button2:Button
     lateinit var button3:Button
     lateinit var imgview:ImageView
     lateinit var wallView:ImageView
+    lateinit var tipText:TextView
 
     lateinit var wallpaperManager:WallpaperManager
     private var cropWidth:Int=0
     private var cropHeight:Int=0
     private var wallpaperWidth:Int=0
     private var wallpaperHeight:Int=0
-    private var mScaleFactor = 1.0f
+    //private var mScaleFactor = 1.0f
 
     lateinit var button5: ToggleButton //clear Timer
     lateinit var timeSet: EditText //set Timer number
@@ -67,12 +68,12 @@ class HomeFragment : Fragment() {
     lateinit var button6:ToggleButton //screen
     lateinit var checkbox:CheckBox
     var uriList=mutableListOf<Uri>()//for test, a list of Uri
-
+/*
     companion object {
         private const val NONE = 0
         private const val DRAG = 1
         private const val ZOOM = 2
-    }
+    }*/
 
     private val PERMISSION_REQUEST_CODE = 100
     private var canimg:Boolean = true
@@ -133,6 +134,8 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
 
+
+
         // 观察imageUris对象的变化
         sharedViewModel.ImageUris.observe(viewLifecycleOwner) { ImageUris ->
             Log.d("imageuri","$ImageUris.size")
@@ -152,6 +155,8 @@ class HomeFragment : Fragment() {
         // 在这里为HomeFragment设置布局文件
         imgview = view.findViewById(R.id.img_view)
         wallView = view.findViewById(R.id.wallView)
+        tipText = view.findViewById(R.id.tip_text)
+        tipText.isSelected = true
 
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -296,7 +301,7 @@ class HomeFragment : Fragment() {
                 // startActivityForResult(intent, REQUEST_CODE_WALLPAPER)
             }
         }
-/*
+
         val imagePicker =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                 uri?.let {//開圖庫取圖片
@@ -361,7 +366,7 @@ class HomeFragment : Fragment() {
                         .into(imgview)
                     //++?
                 }
-            }*/
+            }
 
 
         button3 = view.findViewById(R.id.btn3)
@@ -371,12 +376,13 @@ class HomeFragment : Fragment() {
             imagePicker2.launch("image/*")//按鈕取圖庫照片//按鈕取圖庫照片
         }
 
-        /*
+
         button = view.findViewById(R.id.btn)
         button.setOnClickListener {
             imagePicker.launch("image/*")//按鈕取圖庫照片
         }
-        */*/
+
+        /*
         var mode = NONE
         var mLastTouchX = 1.0f
         var mLastTouchY = 1.0f
@@ -439,7 +445,8 @@ class HomeFragment : Fragment() {
             //Log.d("first","${imgview.getLeft()},${imgview.getTop() }")
             Log.d("wallview","${wallView.width},${wallView.height}")
             true
-        }//touch
+        }//touch*/
+
         /*
         button2 = view.findViewById(R.id.btn2)
         button2.setOnClickListener {
