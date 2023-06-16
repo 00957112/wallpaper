@@ -14,3 +14,5 @@ Android app project
 6.裁切背景的改色
 
 7.UI設計
+
+8.跑馬燈有tips
