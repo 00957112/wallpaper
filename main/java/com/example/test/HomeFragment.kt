@@ -39,8 +39,10 @@ import android.widget.Toast
 
 class HomeFragment : Fragment() {
     lateinit var button:Button
+    lateinit var button4:ImageView
     //lateinit var button2:Button
     lateinit var button3:Button
+    lateinit var button9:ImageView
     lateinit var imgview:ImageView
     lateinit var wallView:ImageView
     lateinit var tipText:TextView
@@ -368,17 +370,18 @@ class HomeFragment : Fragment() {
                 }
             }
 
+        button9 = view.findViewById(R.id.btn3)
+        Glide.with(requireContext()).asGif().load(R.drawable.image_forgif).into(button9)
 
-        button3 = view.findViewById(R.id.btn3)
-        button3.setOnClickListener {
+        button9.setOnClickListener {
             Log.d("wall", "按下btn3")
             //WallpaperManager.getInstance(this).clear()
             imagePicker2.launch("image/*")//按鈕取圖庫照片//按鈕取圖庫照片
         }
 
 
-        button = view.findViewById(R.id.btn)
-        button.setOnClickListener {
+        button4 = view.findViewById(R.id.btn)
+        button4.setOnClickListener {
             imagePicker.launch("image/*")//按鈕取圖庫照片
         }
 
